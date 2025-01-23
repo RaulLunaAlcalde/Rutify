@@ -22,4 +22,9 @@
         android:name="com.rlunaalc.rutify.ui.slideshow.SlideshowFragment"
         android:label="@string/menu_slideshow"
         tools:layout="@layout/fragment_slideshow" />
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.rlunaalc.rutify.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" />
 </navigation>
