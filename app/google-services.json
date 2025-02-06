@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "254717779906",
+    "project_id": "rutify-1f263",
+    "storage_bucket": "rutify-1f263.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:254717779906:android:d5d8829d03acd11e1e805b",
+        "android_client_info": {
+          "package_name": "com.rlunaalc.rutify"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCU1rcYEBOe3sQqNef5mF8gIxvvL4ZAFtY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

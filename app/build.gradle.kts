@@ -1,11 +1,13 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id("com.google.gms.google-services") version "4.4.2" apply false
+    //id("com.android.application")
 }
 
 android {
     namespace = "com.rlunaalc.rutify"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.rlunaalc.rutify"
@@ -54,4 +56,15 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    // Import the Firebase BoM
+    //
+    // implementation(platform("com.google.firebase:firebase-bom:33.8.0"))
+
+
+    // When using the BoM, don't specify versions in Firebase dependencies
+    //implementation("com.google.firebase:firebase-analytics")
+
+
+    // Add the dependencies for any other desired Firebase products
+    // https://firebase.google.com/docs/android/setup#available-libraries
 }
