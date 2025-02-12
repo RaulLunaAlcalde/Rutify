@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "254717779906",
-    "project_id": "rutify-1f263",
-    "storage_bucket": "rutify-1f263.firebasestorage.app"
+    "project_number": "837833575859",
+    "project_id": "rutify-50874",
+    "storage_bucket": "rutify-50874.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:254717779906:android:d5d8829d03acd11e1e805b",
+        "mobilesdk_app_id": "1:837833575859:android:5beffba517a07e3383cfc6",
         "android_client_info": {
           "package_name": "com.rlunaalc.rutify"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCU1rcYEBOe3sQqNef5mF8gIxvvL4ZAFtY"
+          "current_key": "AIzaSyAHUJB9Q8dlbCxSmuZHE4Hj7W1SskejUoc"
         }
       ],
       "services": {
