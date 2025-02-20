@@ -24,30 +24,31 @@
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:text="Inscriu-te a Rutify"
         android:textColor="@android:color/white"
         android:textSize="24sp"
         android:textStyle="bold"
-        android:layout_marginTop="20dp"
-        app:layout_constraintTop_toBottomOf="@id/icon_location"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/icon_location" />
 
     <!-- Campo de Email -->
     <EditText
         android:id="@+id/email_input"
         android:layout_width="0dp"
         android:layout_height="50dp"
-        android:hint="Email"
-        android:background="@drawable/edit_text_background"
-        android:textColor="@android:color/white"
-        android:padding="10dp"
-        android:inputType="textEmailAddress"
-        app:layout_constraintTop_toBottomOf="@id/title"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginHorizontal="20dp"
         android:layout_marginTop="20dp"
-        android:layout_marginHorizontal="20dp"/>
+        android:background="@drawable/edit_text_background"
+        android:hint="Email"
+        android:inputType="textEmailAddress"
+        android:padding="10dp"
+        android:textColor="@android:color/white"
+        android:textColorHint="@android:color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lastname_input" />
 
     <!-- Campo de Password -->
     <EditText
@@ -56,6 +57,7 @@
         android:layout_height="50dp"
         android:hint="Password"
         android:background="@drawable/edit_text_background"
+        android:textColorHint="@android:color/white"
         android:textColor="@android:color/white"
         android:padding="10dp"
         android:inputType="textPassword"
@@ -73,6 +75,7 @@
         android:layout_height="50dp"
         android:hint="Username"
         android:background="@drawable/edit_text_background"
+        android:textColorHint="@android:color/white"
         android:textColor="@android:color/white"
         android:padding="10dp"
         android:inputType="textPersonName"
@@ -81,6 +84,44 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="15dp"
         android:layout_marginHorizontal="20dp"/>
+
+
+    <!-- Campo de Nombre -->
+    <EditText
+        android:id="@+id/name_input"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/edit_text_background"
+        android:hint="Name"
+        android:inputType="textPersonName"
+        android:padding="10dp"
+        android:textColor="@android:color/white"
+        android:textColorHint="@android:color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title" />
+
+
+    <!-- Campo de Apellidos -->
+    <EditText
+        android:id="@+id/lastname_input"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/edit_text_background"
+        android:hint="Last name"
+        android:inputType="textPersonName"
+        android:padding="10dp"
+        android:textColor="@android:color/white"
+        android:textColorHint="@android:color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/name_input" />
+
 
     <!-- Botón de Iniciar Sesión -->
     <Button
@@ -98,31 +139,32 @@
 
     <!-- Links de Política y Términos -->
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_marginTop="20dp"
-        app:layout_constraintTop_toBottomOf="@id/login_button"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/login_button">
 
         <TextView
             android:id="@+id/privacy_policy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
             android:text="Política de privacitat"
             android:textColor="@android:color/darker_gray"
-            android:textSize="12sp"
-            android:layout_marginEnd="10dp"/>
+            android:textSize="12sp" />
 
         <TextView
             android:id="@+id/cookies_policy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
             android:text="Política de cookies"
             android:textColor="@android:color/darker_gray"
-            android:textSize="12sp"
-            android:layout_marginEnd="10dp"/>
+            android:textSize="12sp" />
 
         <TextView
             android:id="@+id/terms_service"
@@ -130,6 +172,6 @@
             android:layout_height="wrap_content"
             android:text="Termes de servei"
             android:textColor="@android:color/darker_gray"
-            android:textSize="12sp"/>
+            android:textSize="12sp" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
