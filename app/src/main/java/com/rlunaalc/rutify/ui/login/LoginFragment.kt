@@ -22,6 +22,10 @@ class LoginFragment : Fragment() {
         binding = FragmentLoginBinding.inflate(inflater, container, false)
         firebaseAuth = FirebaseAuth.getInstance()
 
+        binding.registerButton.setOnClickListener {
+            findNavController().navigate(R.id.registerFragment)
+        }
+
         binding.loginButton.setOnClickListener {
             val email = binding.emailInput.text.toString()
             val pass = binding.passwordInput.text.toString()

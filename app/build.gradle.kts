@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    id ("com.google.gms.google-services")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -36,8 +36,12 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        compose = true
     }
-    dataBinding{
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.4"
+    }
+    dataBinding {
         enable = true
     }
 }
@@ -52,12 +56,23 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
-    //implementation(libs.firebase.auth.ktx)
-    //implementation(libs.firebase.firestore.ktx)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+    implementation(libs.androidx.ui.android)
+    implementation(libs.androidx.foundation.layout.android)
+
+    // Firebase
     implementation("com.google.firebase:firebase-auth:22.3.1")
     implementation("com.google.firebase:firebase-analytics:21.5.1")
     implementation("com.google.firebase:firebase-firestore:25.1.2")
+
+    // Mapbox
+    implementation("com.mapbox.maps:android:11.10.0")
+    implementation("com.mapbox.extension:maps-compose:11.10.0")
+
+    // Jetpack Compose Compiler (Compatible con Kotlin 1.9.0)
+    implementation("androidx.compose.compiler:compiler:1.5.3")
+
+    // Tests
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
 }
