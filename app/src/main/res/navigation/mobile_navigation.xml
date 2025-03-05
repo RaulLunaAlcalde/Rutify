@@ -32,4 +32,24 @@
         android:name="com.rlunaalc.rutify.ui.register.RegisterFragment"
         android:label="fragment_register"
         tools:layout="@layout/fragment_register" />
+    <fragment
+        android:id="@+id/historialFragment"
+        android:name="com.rlunaalc.rutify.HistorialFragment"
+        android:label="fragment_historial"
+        tools:layout="@layout/fragment_historial" />
+    <fragment
+        android:id="@+id/planificarRutaFragment"
+        android:name="com.rlunaalc.rutify.PlanificarRutaFragment"
+        android:label="fragment_planificar_ruta"
+        tools:layout="@layout/fragment_planificar_ruta" />
+    <fragment
+        android:id="@+id/grupsFragment"
+        android:name="com.rlunaalc.rutify.GrupsFragment"
+        android:label="fragment_grups"
+        tools:layout="@layout/fragment_grups" />
+    <fragment
+        android:id="@+id/perfilFragment"
+        android:name="com.rlunaalc.rutify.PerfilFragment"
+        android:label="fragment_perfil"
+        tools:layout="@layout/fragment_perfil" />
 </navigation>

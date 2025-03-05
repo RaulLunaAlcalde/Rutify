@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_home"
+        android:icon="@drawable/home"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:title="@string/menu_home" />
+    <item
+        android:id="@+id/historialFragment"
+        android:icon="@drawable/history"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:title="@string/menu_historial" />
+    <item
+        android:id="@+id/grupsFragment"
+        android:icon="@drawable/groups"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:title="@string/menu_grups" />
+    <item
+        android:id="@+id/planificarRutaFragment"
+        android:icon="@drawable/routes"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:title="@string/menu_ruta" />
+    <item
+        android:id="@+id/perfilFragment"
+        android:icon="@drawable/profile"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:title="@string/menu_perfil" />
+
+
+</menu>

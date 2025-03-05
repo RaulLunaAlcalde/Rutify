@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("com.google.gms.google-services")
+    id("kotlin-kapt")
 }
 
 android {
@@ -37,17 +38,14 @@ android {
     buildFeatures {
         viewBinding = true
         compose = true
+        dataBinding = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.4"
     }
-    dataBinding {
-        enable = true
-    }
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -56,20 +54,23 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
-    implementation(libs.androidx.ui.android)
-    implementation(libs.androidx.foundation.layout.android)
+
+    // Jetpack Compose
+    implementation("androidx.compose.ui:ui:1.5.0")
+    implementation("androidx.compose.material:material:1.5.0")
+    implementation("androidx.compose.ui:ui-tooling-preview:1.5.0")
+    implementation("androidx.compose.foundation:foundation:1.5.0")
+    implementation("androidx.compose.runtime:runtime:1.5.0")
+    implementation("androidx.activity:activity-compose:1.10.1")
 
     // Firebase
     implementation("com.google.firebase:firebase-auth:22.3.1")
     implementation("com.google.firebase:firebase-analytics:21.5.1")
     implementation("com.google.firebase:firebase-firestore:25.1.2")
 
-    // Mapbox
+    // Mapbox (Última versión estable)
     implementation("com.mapbox.maps:android:11.10.0")
     implementation("com.mapbox.extension:maps-compose:11.10.0")
-
-    // Jetpack Compose Compiler (Compatible con Kotlin 1.9.0)
-    implementation("androidx.compose.compiler:compiler:1.5.3")
 
     // Tests
     testImplementation(libs.junit)
