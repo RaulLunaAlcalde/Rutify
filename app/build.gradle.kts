@@ -71,6 +71,7 @@ dependencies {
     // Mapbox (Última versión estable)
     implementation("com.mapbox.maps:android:11.10.0")
     implementation("com.mapbox.extension:maps-compose:11.10.0")
+    implementation(libs.androidx.foundation.android)
 
     // Tests
     testImplementation(libs.junit)

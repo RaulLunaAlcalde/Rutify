@@ -10,5 +10,6 @@
     <color name="dark_gray">#1E1E1E</color>
     <color name="green">#00C853</color>
     <color name="gray">#B0B0B0</color>
+    <color name="fondo_app">#454545</color>
 
 </resources>
