@@ -1,59 +1,101 @@
 package com.rlunaalc.rutify
-
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FirebaseFirestore
+import com.rlunaalc.rutify.R
+import com.rlunaalc.rutify.Ruta
+import com.rlunaalc.rutify.RutaAdapter
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [HistorialFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class HistorialFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var rutaAdapter: RutaAdapter
+    private val db = FirebaseFirestore.getInstance()
+    private val listaRutas = mutableListOf<Ruta>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_historial, container, false)
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment HistorialFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            HistorialFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        recyclerView = view.findViewById(R.id.recyclerView)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+
+        rutaAdapter = RutaAdapter(listaRutas)
+        recyclerView.adapter = rutaAdapter
+
+        obtenerRutasDesdeFirebase()
     }
+
+    private fun obtenerRutasDesdeFirebase() {
+        val auth = FirebaseAuth.getInstance()
+        val usuarioActual = auth.currentUser
+
+        if (usuarioActual != null) {
+            val usuarioEmail = usuarioActual.email ?: run {
+                Log.e("FirebaseAuth", "El usuario no tiene email")
+                return
+            }
+
+            val usuarioSanitizado = usuarioEmail.replace(".", "_") // Sanitizamos el email
+
+            Log.d("Firebase", "Correo del usuario: $usuarioEmail")
+            Log.d("Firebase", "Correo sanitizado: $usuarioSanitizado")
+
+            val usuarioRef = db.collection("usuarios").document(usuarioEmail)
+
+            // 1. Obtener el nombre del usuario
+            usuarioRef.get()
+                .addOnSuccessListener { documento ->
+                    if (documento.exists()) {
+                        val nombreUsuario = documento.getString("nombre") ?: "Desconocido"
+
+                        // 2. Obtener las rutas del usuario
+                        usuarioRef.collection("rutas").get()
+                            .addOnSuccessListener { documentos ->
+                                listaRutas.clear() // Limpiamos la lista antes de llenarla
+                                for (documentoRuta in documentos) {
+                                    val nombreRuta = documentoRuta.id // El ID es el nombre de la ruta
+
+                                    // Crear el objeto Ruta
+                                    val ruta = Ruta(
+                                        nombre = nombreRuta,
+                                        usuario = nombreUsuario,
+                                        imagenRuta = "", // Deberías agregar lógica para obtener la imagen
+                                        imagenUsuario = "", // Deberías agregar lógica para obtener la imagen del usuario
+                                        coordenadas = emptyList() // Aquí deberías agregar las coordenadas si las tienes
+                                    )
+
+                                    Log.d("Firebase", "Ruta obtenida: $nombreRuta, Usuario: $nombreUsuario")
+                                    listaRutas.add(ruta)
+                                }
+                                rutaAdapter.notifyDataSetChanged() // Notificar al adapter que la lista ha cambiado
+                            }
+                            .addOnFailureListener { e ->
+                                Log.e("Firebase", "Error obteniendo rutas", e)
+                            }
+                    } else {
+                        Log.e("Firebase", "No se encontró el documento del usuario")
+                    }
+                }
+                .addOnFailureListener { e ->
+                    Log.e("Firebase", "Error obteniendo usuario", e)
+                }
+        } else {
+            Log.e("Firebase", "No hay usuario autenticado")
+        }
+    }
+
 }
