@@ -1,12 +1,16 @@
 package com.rlunaalc.rutify
 
+import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
+import com.rlunaalc.rutify.ui.home.RealizarRuta
+
 
 class RutaAdapter(private val listaRutas: List<Ruta>) :
     RecyclerView.Adapter<RutaAdapter.RutaViewHolder>() {
@@ -24,17 +28,34 @@ class RutaAdapter(private val listaRutas: List<Ruta>) :
         return RutaViewHolder(view)
     }
 
+    // RutaAdapter.kt
     override fun onBindViewHolder(holder: RutaViewHolder, position: Int) {
         val ruta = listaRutas[position]
-
-        Log.d("RecyclerView", "Nombre usuario: ${ruta.usuario}, Nombre ruta: ${ruta.nombre}")
 
         holder.tvNombreUsuario.text = ruta.usuario
         holder.tvNombreRuta.text = ruta.nombre
 
         holder.tvImagenPerfil.setImageResource(R.drawable.ic_android_white_24dp)
         holder.tvImagenRuta.setImageResource(R.drawable.ic_android_black_24dp)
+
+        holder.itemView.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putString("rutaName", ruta.nombre)
+
+            val realizarRutaFragment = RealizarRuta()
+            realizarRutaFragment.arguments = bundle
+
+            // Acceder al contexto a través de itemView y obtener la actividad asociada
+            val fragmentManager = (holder.itemView.context as AppCompatActivity).supportFragmentManager
+
+            // Asegurarse de que el contenedor de fragmentos esté disponible (puedes cambiar 'fragment_container' por el ID correcto de tu layout)
+            fragmentManager.beginTransaction()
+                .replace(R.id.nav_host_fragment_content_main, realizarRutaFragment)
+                .addToBackStack(null)
+                .commit()
+        }
     }
+
 
     override fun getItemCount(): Int = listaRutas.size
 }

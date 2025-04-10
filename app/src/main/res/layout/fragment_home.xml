@@ -1,37 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.mapbox.maps.MapView
-        android:id="@+id/mapView"
+    <!-- Fragmento del mapa -->
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"/>
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
+    <!-- Campo de texto para el nombre de la ruta (flotando en la parte superior) -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
-        android:padding="12dp"
-        android:layout_gravity="top"
-        android:background="#AA000000">
+        android:layout_gravity="top|start"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:hint="Nombre de la ruta"
+        android:background="@android:color/white"
+        android:elevation="6dp">
 
-        <EditText
-            android:id="@+id/editTextRouteName"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:hint="Nombre de la ruta"
-            android:textColor="#FFFFFF"
-            android:background="@android:color/darker_gray" />
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/routeNameEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </com.google.android.material.textfield.TextInputLayout>
 
-        <Button
-            android:id="@+id/buttonSave"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Guardar"
-            android:textColor="#FFFFFF"
-            android:background="@color/green" />
-    </LinearLayout>
+    <!-- Botón para guardar la ruta (flotando en la parte superior derecha) -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/saveRouteButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Guardar"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"/>
+
+    <!-- Botón para dibujar la ruta (flotando en la parte inferior) -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/drawRouteButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="Dibujar Ruta" />
 
 </FrameLayout>

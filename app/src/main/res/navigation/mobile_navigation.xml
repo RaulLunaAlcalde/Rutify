@@ -52,4 +52,9 @@
         android:name="com.rlunaalc.rutify.PerfilFragment"
         android:label="fragment_perfil"
         tools:layout="@layout/fragment_perfil" />
+    <fragment
+        android:id="@+id/realizarRuta"
+        android:name="com.rlunaalc.rutify.RealizarRuta"
+        android:label="fragment_realizar_ruta"
+        tools:layout="@layout/fragment_realizar_ruta" />
 </navigation>

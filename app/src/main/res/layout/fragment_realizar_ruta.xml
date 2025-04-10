@@ -1,0 +1,78 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/fondo_app"
+        tools:context=".ui.home.RealizarRutaFragment">
+
+        <!-- MapView en lugar de SupportMapFragment -->
+        <com.google.android.gms.maps.MapView
+            android:id="@+id/mapView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <!-- Panel de información flotante -->
+        <LinearLayout
+            android:id="@+id/contenedorInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:background="@drawable/rounded_background"
+            android:visibility="gone"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="72dp"
+            android:elevation="10dp">
+
+            <TextView
+                android:id="@+id/tvNombreRuta"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nombre de la ruta"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/tvKilometros"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Kilómetros"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <!-- Botón ENCIMA del mapa -->
+        <Button
+            android:id="@+id/btnIniciarRuta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Iniciar Seguimiento"
+            android:layout_gravity="top|center_horizontal"
+            android:layout_marginTop="24dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:backgroundTint="@color/green"
+            android:textColor="@android:color/white"
+            android:elevation="8dp" />
+
+        <!-- Botón para mostrar información -->
+        <Button
+            android:id="@+id/btnMostrarInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ver Info"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="@color/green"
+            android:textColor="@android:color/white"
+            android:elevation="20dp" />
+
+    </FrameLayout>
+
+</layout>

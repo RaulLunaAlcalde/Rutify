@@ -38,10 +38,12 @@ android {
     buildFeatures {
         viewBinding = true
         compose = true
-        dataBinding = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.4"
+    }
+    dataBinding {
+        enable = true
     }
 }
 
@@ -68,10 +70,18 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics:21.5.1")
     implementation("com.google.firebase:firebase-firestore:25.1.2")
 
-    // Mapbox (Última versión estable)
-    implementation("com.mapbox.maps:android:11.10.0")
-    implementation("com.mapbox.extension:maps-compose:11.10.0")
-    implementation(libs.androidx.foundation.android)
+    // Google Maps
+    implementation("com.google.android.gms:play-services-maps:18.1.0")
+    implementation("com.google.android.gms:play-services-location:21.0.1")
+    implementation("com.google.android.gms:play-services-base:18.0.1")
+
+    // Maps Utils (si es necesario)
+    implementation("com.google.maps.android:android-maps-utils:2.2.3")
+    implementation("com.squareup.okhttp3:okhttp:4.9.0") // Asegúrate de usar la última versión
+
+
+    // Volley (si lo necesitas)
+    implementation(libs.volley)
 
     // Tests
     testImplementation(libs.junit)
