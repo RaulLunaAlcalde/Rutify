@@ -1,59 +1,114 @@
 package com.rlunaalc.rutify
 
+import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.rlunaalc.rutify.databinding.FragmentPerfilBinding
+import com.bumptech.glide.Glide
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [PerfilFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class PerfilFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private var _binding: FragmentPerfilBinding? = null
+    private val binding get() = _binding!!
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private val auth = FirebaseAuth.getInstance()
+    private val db = FirebaseFirestore.getInstance()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_perfil, container, false)
+    ): View {
+        _binding = FragmentPerfilBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment PerfilFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            PerfilFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        cargarDatosPerfil()
+
+        binding.btnCerrarSesion.setOnClickListener {
+            cerrarSesion()
+        }
+    }
+
+    private fun cargarDatosPerfil() {
+        val usuarioActual = auth.currentUser
+        if (usuarioActual != null) {
+            val usuarioEmail = usuarioActual.email ?: run {
+                Log.e("FirebaseAuth", "El usuario no tiene email")
+                return
             }
+
+            val usuarioRef = db.collection("usuarios").document(usuarioEmail)
+
+            usuarioRef.get()
+                .addOnSuccessListener { documento ->
+                    if (documento.exists()) {
+                        val usuarioId = documento.getLong("id") ?: run {
+                            Log.e("Perfil", "No se encontró el ID del usuario")
+                            return@addOnSuccessListener
+                        }
+                        val nombre = documento.getString("nombre") ?: "Usuario"
+                        val imagenPerfil = documento.getString("imagenPerfil") ?: ""
+
+                        binding.txtNombre.text = nombre
+
+                        if (imagenPerfil.isNotEmpty()) {
+                            Glide.with(this).load(imagenPerfil).into(binding.imgPerfil)
+                        }
+
+                        obtenerSeguidores(usuarioId)
+                        obtenerSeguidos(usuarioId)
+                    }
+                }
+                .addOnFailureListener { e ->
+                    Log.e("Perfil", "Error obteniendo datos del usuario", e)
+                }
+        }
+    }
+
+
+    private fun obtenerSeguidores(usuarioId: Long) {
+        db.collection("seguidores")
+            .whereEqualTo("id_seguido", usuarioId)
+            .get()
+            .addOnSuccessListener { documents ->
+                binding.txtSeguidores.text = documents.size().toString()
+            }
+            .addOnFailureListener { e ->
+                Log.e("Perfil", "Error obteniendo seguidores", e)
+            }
+    }
+
+    private fun obtenerSeguidos(usuarioId: Long) {
+        db.collection("seguidores")
+            .whereEqualTo("id_usuario", usuarioId)
+            .get()
+            .addOnSuccessListener { documents ->
+                binding.txtSiguiendo.text = documents.size().toString()
+            }
+            .addOnFailureListener { e ->
+                Log.e("Perfil", "Error obteniendo seguidos", e)
+            }
+    }
+
+    private fun cerrarSesion() {
+        auth.signOut()
+
+        val navController = findNavController()
+        navController.navigate(R.id.loginFragment)
+    }
+
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
