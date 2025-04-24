@@ -89,6 +89,15 @@
     </LinearLayout>
 
     <Button
+        android:id="@+id/btnReptes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Reptes"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="#1976D2"
+        android:layout_marginTop="16dp"/>
+
+    <Button
         android:id="@+id/btnCerrarSesion"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
