@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.os.Bundle
 import android.util.Log
@@ -14,33 +13,34 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.maps.model.PolylineOptions
-import com.google.android.gms.maps.MapView
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.BitmapDescriptor
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.Polyline
+import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.rlunaalc.rutify.R
-import com.rlunaalc.rutify.RealizarRutaDirections
-import com.rlunaalc.rutify.Ruta
 import com.rlunaalc.rutify.ui.Coordenada
-import okhttp3.*
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
 import org.json.JSONObject
 import java.io.IOException
 
@@ -226,6 +226,25 @@ class RealizarRuta : Fragment(), OnMapReadyCallback {
                 NavOptions.Builder()
                     .setPopUpTo(R.id.mobile_navigation, true)
                     .build())
+
+        }
+        val rutaName = arguments?.getString("rutaName")
+        val auth = FirebaseAuth.getInstance()
+        val userEmail = auth.currentUser?.email
+
+        if (rutaName != null && userEmail != null) {
+            val db = FirebaseFirestore.getInstance()
+            val rutaRef = db.collection("usuarios").document(userEmail).collection("rutas").document(rutaName)
+
+            rutaRef.update("rutaHecha", true)
+                .addOnSuccessListener {
+                    Log.d("Firebase", "Ruta marcada como completada correctamente.")
+                    // 🔥 NUEVO: Mostrar Snackbar de confirmación
+                    Snackbar.make(requireView(), "Ruta completada y guardada", Snackbar.LENGTH_SHORT).show()
+                }
+                .addOnFailureListener { e ->
+                    Log.e("Firebase", "Error actualizando rutaHecha", e)
+                }
 
         }
 

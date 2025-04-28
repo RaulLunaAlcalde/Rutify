@@ -24,6 +24,7 @@ import com.google.android.material.textfield.TextInputEditText
 import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import com.google.android.material.snackbar.Snackbar
 import com.rlunaalc.rutify.R
 import com.rlunaalc.rutify.databinding.FragmentHomeBinding
 import org.json.JSONObject
@@ -177,14 +178,22 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             val rutaData = hashMapOf(
                 "nombre" to nombreRuta,
                 "fecha" to SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date()),
-                "coordenadas" to coordenadas.map { hashMapOf("lat" to it.latitude, "lng" to it.longitude) }
+                "coordenadas" to coordenadas.map { hashMapOf("lat" to it.latitude, "lng" to it.longitude) },
+                "rutaHecha" to false
             )
 
             usuarioRef.collection("rutas").document(nombreRuta).set(rutaData)
-                .addOnSuccessListener { Log.d("Firebase", "Ruta '$nombreRuta' guardada exitosamente en Firestore") }
-                .addOnFailureListener { e -> Log.e("Firebase", "Error guardando la ruta", e) }
+                .addOnSuccessListener {
+                    Log.d("Firebase", "Ruta '$nombreRuta' guardada exitosamente en Firestore")
+                    Snackbar.make(requireView(), "Ruta guardada exitosamente", Snackbar.LENGTH_SHORT).show()
+                }
+                .addOnFailureListener { e ->
+                    Log.e("Firebase", "Error guardando la ruta", e)
+                    Snackbar.make(requireView(), "Error al guardar la ruta", Snackbar.LENGTH_SHORT).show()
+                }
         } else {
             Log.e("Firebase", "No hay usuario autenticado")
+            Snackbar.make(requireView(), "Usuario no autenticado", Snackbar.LENGTH_SHORT).show()
         }
     }
 

@@ -93,11 +93,19 @@
         android:id="@+id/homeDefFragment"
         android:name="com.rlunaalc.rutify.HomeDefFragment"
         android:label="fragment_home_def"
-        tools:layout="@layout/fragment_home_def" />
+        tools:layout="@layout/fragment_home_def" >
+        <action
+            android:id="@+id/action_homeDefFragment_to_realizarRuta"
+            app:destination="@id/realizarRuta" />
+    </fragment>
     <fragment
         android:id="@+id/retosFragment"
         android:name="com.rlunaalc.rutify.RetosFragment"
         android:label="fragment_retos"
-        tools:layout="@layout/fragment_retos" />
+        tools:layout="@layout/fragment_retos" >
+        <action
+            android:id="@+id/action_retosFragment_to_realizarRuta"
+            app:destination="@id/realizarRuta" />
+    </fragment>
 
 </navigation>

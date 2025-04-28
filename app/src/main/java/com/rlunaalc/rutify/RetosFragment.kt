@@ -30,7 +30,7 @@ class RetosFragment : Fragment() {
         recyclerView = view.findViewById(R.id.recyclerViewRetos)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        rutaAdapter = RutaAdapter(listaRetos)
+        rutaAdapter = RutaAdapter(listaRetos, "retos")
         recyclerView.adapter = rutaAdapter
 
         obtenerRetosDesdeFirebase()

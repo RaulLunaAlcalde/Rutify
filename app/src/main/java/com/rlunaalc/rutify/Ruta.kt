@@ -8,5 +8,6 @@ data class Ruta(
     val coordenadas: List<Coordenada> = emptyList(),
     val imagenRuta: String = "",
     val usuario: String = "",
-    val imagenUsuario: String = ""
+    val imagenUsuario: String = "",
+    val rutaHecha: Boolean = false
 )
