@@ -69,6 +69,10 @@ class PerfilFragment : Fragment() {
         binding.imgPerfil.setOnClickListener {
             imagePickerLauncher.launch("image/*")
         }
+
+        binding.btnReptes.setOnClickListener {
+            findNavController().navigate(R.id.retosFragment)
+        }
     }
 
     private fun cargarDatosPerfil() {

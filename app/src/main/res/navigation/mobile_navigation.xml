@@ -57,4 +57,9 @@
         android:name="com.rlunaalc.rutify.RealizarRuta"
         android:label="fragment_realizar_ruta"
         tools:layout="@layout/fragment_realizar_ruta" />
+    <fragment
+        android:id="@+id/retosFragment"
+        android:name="com.rlunaalc.rutify.RetosFragment"
+        android:label="fragment_retos"
+        tools:layout="@layout/fragment_retos" />
 </navigation>
