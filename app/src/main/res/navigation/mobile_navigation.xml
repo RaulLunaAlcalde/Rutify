@@ -36,7 +36,11 @@
         android:id="@+id/historialFragment"
         android:name="com.rlunaalc.rutify.HistorialFragment"
         android:label="fragment_historial"
-        tools:layout="@layout/fragment_historial" />
+        tools:layout="@layout/fragment_historial" >
+        <action
+            android:id="@+id/action_historialFragment_to_realizarRuta"
+            app:destination="@id/realizarRuta" />
+    </fragment>
     <fragment
         android:id="@+id/planificarRutaFragment"
         android:name="com.rlunaalc.rutify.PlanificarRutaFragment"
@@ -56,10 +60,44 @@
         android:id="@+id/realizarRuta"
         android:name="com.rlunaalc.rutify.RealizarRuta"
         android:label="fragment_realizar_ruta"
-        tools:layout="@layout/fragment_realizar_ruta" />
+        tools:layout="@layout/fragment_realizar_ruta" >
+        <argument
+            android:name="rutaName"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_realizarRuta_to_rutaCompletada"
+            app:destination="@id/rutaCompletada" />
+        <action
+            android:id="@+id/action_realizarRuta_to_homeDefFragment"
+            app:destination="@id/homeDefFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/rutaCompletada"
+        android:name="com.rlunaalc.rutify.ui.home.RutaCompletada"
+        android:label="Ruta Completada"
+        tools:layout="@layout/fragment_ruta_completada">
+        <argument
+            android:name="duracionSegundos"
+            app:argType="integer" />
+        <argument
+            android:name="distanciaKm"
+            app:argType="float" />
+        <argument
+            android:name="ritmoMinKm"
+            app:argType="float" />
+        <argument
+            android:name="kcal"
+            app:argType="float" />
+    </fragment>
+    <fragment
+        android:id="@+id/homeDefFragment"
+        android:name="com.rlunaalc.rutify.HomeDefFragment"
+        android:label="fragment_home_def"
+        tools:layout="@layout/fragment_home_def" />
     <fragment
         android:id="@+id/retosFragment"
         android:name="com.rlunaalc.rutify.RetosFragment"
         android:label="fragment_retos"
         tools:layout="@layout/fragment_retos" />
+
 </navigation>

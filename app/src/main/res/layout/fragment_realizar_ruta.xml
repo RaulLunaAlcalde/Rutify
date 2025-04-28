@@ -8,13 +8,13 @@
         android:background="@color/fondo_app"
         tools:context=".ui.home.RealizarRutaFragment">
 
-        <!-- MapView en lugar de SupportMapFragment -->
+        <!-- MapView -->
         <com.google.android.gms.maps.MapView
             android:id="@+id/mapView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
 
-        <!-- Panel de información flotante -->
+        <!-- Panel de información -->
         <LinearLayout
             android:id="@+id/contenedorInfo"
             android:layout_width="match_parent"
@@ -47,31 +47,103 @@
                 android:textSize="14sp" />
         </LinearLayout>
 
-        <!-- Botón ENCIMA del mapa -->
-        <Button
-            android:id="@+id/btnIniciarRuta"
+        <!-- Contenedor horizontal para los dos botones alineados a la izquierda -->
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Iniciar Seguimiento"
-            android:layout_gravity="top|center_horizontal"
-            android:layout_marginTop="24dp"
+            android:layout_gravity="bottom|start"
             android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:backgroundTint="@color/green"
-            android:textColor="@android:color/white"
-            android:elevation="8dp" />
-
-        <!-- Botón para mostrar información -->
-        <Button
-            android:id="@+id/btnMostrarInfo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Ver Info"
-            android:layout_gravity="bottom|center_horizontal"
             android:layout_marginBottom="16dp"
-            android:backgroundTint="@color/green"
-            android:textColor="@android:color/white"
-            android:elevation="20dp" />
+            android:orientation="horizontal"
+            android:gravity="start">
+
+            <!-- Botón Ver Info -->
+            <Button
+                android:id="@+id/btnMostrarInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ver Info"
+                android:backgroundTint="@color/green"
+                android:textColor="@android:color/white"
+                android:elevation="20dp"
+                android:layout_marginEnd="8dp" />
+
+            <!-- Botón Iniciar Ruta -->
+            <Button
+                android:id="@+id/btnIniciarRuta"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Iniciar Seguimiento"
+                android:backgroundTint="@color/green"
+                android:textColor="@android:color/white"
+                android:elevation="20dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/popupResumenRuta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:padding="16dp"
+            android:elevation="12dp"
+            android:layout_margin="16dp"
+            android:alpha="0"
+            android:layout_marginTop="32dp"
+            android:backgroundTint="#454545"
+            android:clipToPadding="false"
+            android:background="@drawable/popup_resume_background"
+            android:gravity="center_horizontal">
+
+            <TextView
+                android:id="@+id/tvPopupTitulo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ruta Completada"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp"/>
+
+            <TextView
+                android:id="@+id/tvPopupDuracion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"/>
+
+            <TextView
+                android:id="@+id/tvPopupDistancia"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"/>
+
+            <TextView
+                android:id="@+id/tvPopupRitmo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"/>
+
+            <TextView
+                android:id="@+id/tvPopupKcal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"/>
+
+            <Button
+                android:id="@+id/btnVolverInicio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="@color/green"
+                android:textColor="@android:color/white"
+                android:text="Volver al Inicio"
+                android:elevation="8dp" />
+
+
+        </LinearLayout>
+
+
 
     </FrameLayout>
 

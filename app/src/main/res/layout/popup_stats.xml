@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/popup_background"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:elevation="8dp">
+
+    <TextView
+        android:id="@+id/tvDuracion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Duración:"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:id="@+id/tvDistancia"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Distancia:"
+        android:textSize="16sp"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:id="@+id/tvRitmo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ritmo:"
+        android:textSize="16sp"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:id="@+id/tvKcal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Kcal:"
+        android:textSize="16sp" />
+
+</LinearLayout>

@@ -1,4 +1,4 @@
-package com.rlunaalc.rutify.ui.home
+package com.rlunaalc.rutify
 
 import android.Manifest
 import android.content.Context
@@ -19,6 +19,8 @@ import androidx.annotation.DrawableRes
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavOptions
+import androidx.navigation.fragment.findNavController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -35,6 +37,7 @@ import com.google.android.gms.maps.model.Polyline
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.rlunaalc.rutify.R
+import com.rlunaalc.rutify.RealizarRutaDirections
 import com.rlunaalc.rutify.Ruta
 import com.rlunaalc.rutify.ui.Coordenada
 import okhttp3.*
@@ -45,6 +48,7 @@ class RealizarRuta : Fragment(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
     private var ruta: Ruta? = null
+    private var tiempoInicio: Long = 0
 
     private lateinit var contenedorInfo: LinearLayout
     private lateinit var tvNombreRuta: TextView
@@ -113,6 +117,7 @@ class RealizarRuta : Fragment(), OnMapReadyCallback {
     private fun iniciarSeguimiento() {
         isTracking = true
         btnIniciarRuta.text = "Detener Seguimiento"
+        tiempoInicio = System.currentTimeMillis()
 
         locationRequest = com.google.android.gms.location.LocationRequest.create().apply {
             interval = 3000 // cada 3 segundos
@@ -179,11 +184,59 @@ class RealizarRuta : Fragment(), OnMapReadyCallback {
         }
     }
 
+    private fun calcularDistanciaTotal(): Double {
+        var total = 0.0
+        for (i in 0 until rutaEnSeguimiento.size - 1) {
+            total += distanciaEntrePuntos(rutaEnSeguimiento[i], rutaEnSeguimiento[i + 1])
+        }
+        return total
+    }
+
+
     private fun detenerSeguimiento() {
         isTracking = false
         btnIniciarRuta.text = "Iniciar Seguimiento"
         fusedLocationClient.removeLocationUpdates(locationCallback)
+
+        val duracionSegundos = ((System.currentTimeMillis() - tiempoInicio) / 1000).toInt()
+        val distanciaKm = calcularDistanciaTotal()
+        val ritmo = if (distanciaKm > 0) duracionSegundos / 60.0 / distanciaKm else 0.0
+        val calorias = distanciaKm * 60
+
+        val popup = requireView().findViewById<View>(R.id.popupResumenRuta)
+        val tvDuracion = popup.findViewById<TextView>(R.id.tvPopupDuracion)
+        val tvDistancia = popup.findViewById<TextView>(R.id.tvPopupDistancia)
+        val tvRitmo = popup.findViewById<TextView>(R.id.tvPopupRitmo)
+        val tvKcal = popup.findViewById<TextView>(R.id.tvPopupKcal)
+
+        tvDuracion.text = "Duración: ${formatTiempo(duracionSegundos)}"
+        tvDistancia.text = "Distancia: %.2f km".format(distanciaKm)
+        tvRitmo.text = "Ritmo: %.2f min/km".format(ritmo)
+        tvKcal.text = "Calorías: %.0f kcal".format(calorias)
+
+        popup.visibility = View.VISIBLE
+        popup.animate()
+            .alpha(1f)
+            .setDuration(600)
+            .start()
+
+        val btnVolverInicio = popup.findViewById<Button>(R.id.btnVolverInicio)
+        btnVolverInicio.setOnClickListener {
+            findNavController().navigate(R.id.homeDefFragment, null,
+                NavOptions.Builder()
+                    .setPopUpTo(R.id.mobile_navigation, true)
+                    .build())
+
+        }
+
     }
+
+    private fun formatTiempo(segundos: Int): String {
+        val minutos = segundos / 60
+        val segundosRestantes = segundos % 60
+        return "%02d:%02d".format(minutos, segundosRestantes)
+    }
+
 
     private fun obtenerRuta(rutaName: String) {
         val db = FirebaseFirestore.getInstance()

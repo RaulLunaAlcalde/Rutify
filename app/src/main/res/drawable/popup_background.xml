@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <!-- Fondo blanco o claro -->
+    <solid android:color="@color/fondo_app" />
+
+    <!-- Bordes redondeados -->
+    <corners android:radius="16dp" />
+
+    <!-- Sombra simulada para API bajas (solo sombra visual, no real) -->
+    <padding
+        android:left="8dp"
+        android:top="8dp"
+        android:right="8dp"
+        android:bottom="8dp" />
+</shape>
