@@ -1,11 +1,17 @@
 package com.rlunaalc.rutify.ui.register
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import android.view.animation.AnimationUtils
+import android.widget.EditText
+import android.widget.TextView
+import android.widget.Button
+import android.widget.LinearLayout
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -30,31 +36,27 @@ class RegisterFragment : Fragment() {
             val email = binding.emailInput.text.toString().trim()
             val pass = binding.passwordInput.text.toString().trim()
             val username = binding.usernameInput.text.toString().trim()
-            val name = binding.nameInput.text.toString().trim()
-            val lastName = binding.lastnameInput.text.toString().trim()
 
-            if (email.isNotEmpty() && pass.isNotEmpty() && username.isNotEmpty() && name.isNotEmpty() && lastName.isNotEmpty()) {
+            if (email.isNotEmpty() && pass.isNotEmpty() && username.isNotEmpty()) {
                 firebaseAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener { authTask ->
                     if (authTask.isSuccessful) {
-                        guardarUsuarioEnFirestore(email, username, name, lastName, pass)
+                        guardarUsuarioEnFirestore(email, username, pass)
                     } else {
-                        Toast.makeText(requireContext(), authTask.exception?.message, Toast.LENGTH_SHORT).show()
+                        showSnackbar(authTask.exception?.message ?: "Error desconocido")
                     }
                 }
             } else {
-                Toast.makeText(requireContext(), "¡Todos los campos son obligatorios!", Toast.LENGTH_SHORT).show()
+                showSnackbar("¡Todos los campos son obligatorios!")
             }
         }
 
         return binding.root
     }
 
-    private fun guardarUsuarioEnFirestore(email: String, username: String, name: String, lastName: String, pass: String) {
+    private fun guardarUsuarioEnFirestore(email: String, username: String, pass: String) {
         val user = mapOf(
             "email" to email,
             "usuario" to username,
-            "nombre" to name,
-            "apellidos" to lastName,
             "contrasenya" to pass,
             "fechaRegistro" to com.google.firebase.Timestamp.now()
         )
@@ -62,11 +64,81 @@ class RegisterFragment : Fragment() {
         firestore.collection("usuarios").document(email)
             .set(user)
             .addOnSuccessListener {
-                Toast.makeText(requireContext(), "Usuario registrado correctamente!", Toast.LENGTH_SHORT).show()
+                showSnackbar("¡Usuario registrado correctamente!")
                 findNavController().navigate(R.id.nav_home)
             }
             .addOnFailureListener {
-                Toast.makeText(requireContext(), "Error al guardar en Firestore", Toast.LENGTH_SHORT).show()
+                showSnackbar("Error al guardar en Firestore")
             }
+    }
+
+    private fun showSnackbar(message: String) {
+        val snackbar = com.google.android.material.snackbar.Snackbar.make(requireView(), message, com.google.android.material.snackbar.Snackbar.LENGTH_SHORT)
+        snackbar.show()
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // Animaciones de entrada
+        val slideUp = AnimationUtils.loadAnimation(requireContext(), R.anim.slide_up)
+
+        view.findViewById<EditText>(R.id.email_input).startAnimation(slideUp)
+        view.findViewById<EditText>(R.id.password_input).startAnimation(slideUp)
+        view.findViewById<EditText>(R.id.username_input).startAnimation(slideUp)
+        view.findViewById<Button>(R.id.login_button).startAnimation(slideUp)
+        view.findViewById<LinearLayout>(R.id.legal_links).startAnimation(slideUp)
+
+        // Máquina de escribir efecto
+        setupTypingEffect(view)
+    }
+
+    private fun setupTypingEffect(view: View) {
+        val titleTextView = view.findViewById<TextView>(R.id.title)
+        val fullText = "Inscriu-te a\nRutify"
+        val typingDelay: Long = 80
+        val cursorBlinkDelay: Long = 500
+
+        var index = 0
+        var repeatCount = 0
+        val maxRepeats = 3
+        var cursorVisible = true
+        val handler = Handler(Looper.getMainLooper())
+
+        lateinit var cursorBlinkRunnable: Runnable
+
+        val typingRunnable = object : Runnable {
+            override fun run() {
+                if (index <= fullText.length) {
+                    val text = fullText.substring(0, index)
+                    titleTextView.text = if (cursorVisible) "$text|" else "$text"
+                    cursorVisible = !cursorVisible
+                    index++
+                    handler.postDelayed(this, typingDelay)
+                } else {
+                    repeatCount++
+                    if (repeatCount < maxRepeats) {
+                        handler.postDelayed({
+                            index = 0
+                            titleTextView.text = ""
+                            handler.post(this)
+                        }, 500)
+                    } else {
+                        handler.post(cursorBlinkRunnable)
+                    }
+                }
+            }
+        }
+
+        cursorBlinkRunnable = object : Runnable {
+            override fun run() {
+                val text = fullText
+                titleTextView.text = if (cursorVisible) "$text|" else text
+                cursorVisible = !cursorVisible
+                handler.postDelayed(this, cursorBlinkDelay)
+            }
+        }
+
+        handler.post(typingRunnable)
     }
 }

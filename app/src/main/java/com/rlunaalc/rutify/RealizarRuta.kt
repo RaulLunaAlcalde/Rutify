@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -13,36 +14,41 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.DrawableRes
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.navigation.NavOptions
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.NavOptions
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.model.BitmapDescriptor
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.maps.model.Polyline
-import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.gms.maps.model.*
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.rlunaalc.rutify.ui.Coordenada
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.Response
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.engine.android.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.request.*
+import io.ktor.http.*
+import io.ktor.serialization.kotlinx.json.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.Json
+import okhttp3.*
 import org.json.JSONObject
 import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.*
 
 class RealizarRuta : Fragment(), OnMapReadyCallback {
 
@@ -65,6 +71,15 @@ class RealizarRuta : Fragment(), OnMapReadyCallback {
     private var isTracking = false
     private val rutaEnSeguimiento = mutableListOf<LatLng>()
     private var polyline: Polyline? = null  // Polyline global para actualizar sin crear una nueva
+
+    private val imagePickerLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        uri?.let {
+            lifecycleScope.launch {
+                uploadImageToSupabase(it)
+            }
+        }
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -112,6 +127,12 @@ class RealizarRuta : Fragment(), OnMapReadyCallback {
 
         val rutaName = arguments?.getString("rutaName") ?: return
         obtenerRuta(rutaName)
+
+        val btnSubirImagenRuta = view.findViewById<Button>(R.id.btnSubirImagenRuta)
+        btnSubirImagenRuta.setOnClickListener {
+            imagePickerLauncher.launch("image/*")
+        }
+
     }
 
     private fun iniciarSeguimiento() {
@@ -183,6 +204,65 @@ class RealizarRuta : Fragment(), OnMapReadyCallback {
             fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null)
         }
     }
+
+    private suspend fun uploadImageToSupabase(uri: Uri) {
+        withContext(Dispatchers.IO) {
+            try {
+                val contentResolver = requireContext().contentResolver
+                val inputStream = contentResolver.openInputStream(uri)
+                val fileBytes = inputStream?.readBytes() ?: return@withContext
+                val fileName = "ruta_${System.currentTimeMillis()}.jpg"
+
+                val client = HttpClient(Android) {
+                    install(ContentNegotiation) {
+                        json(Json { ignoreUnknownKeys = true })
+                    }
+                }
+
+                val response = client.post("https://lsowlungekgzqifulsoh.supabase.co/storage/v1/object/foto/$fileName") {
+                    header("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxzb3dsdW5nZWtnenFpZnVsc29oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzg4MjY0OTcsImV4cCI6MjA1NDQwMjQ5N30.Z5xwaxpHFh6U5F_Z-nMjNTh4vzc5KHYvah8pkciFJeo")
+                    header("apikey", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxzb3dsdW5nZWtnenFpZnVsc29oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzg4MjY0OTcsImV4cCI6MjA1NDQwMjQ5N30.Z5xwaxpHFh6U5F_Z-nMjNTh4vzc5KHYvah8pkciFJeo")
+                    header(HttpHeaders.ContentType, "image/jpeg")
+                    parameter("upsert", "true")
+                    setBody(fileBytes)
+                }
+
+                if (response.status.isSuccess()) {
+                    val imageUrl = "https://lsowlungekgzqifulsoh.supabase.co/storage/v1/object/public/foto/$fileName"
+                    guardarImagenRutaFirestore(imageUrl)
+                    withContext(Dispatchers.Main) {
+                        Snackbar.make(requireView(), "Imagen subida correctamente", Snackbar.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Log.e("Supabase", "Error subiendo imagen: ${response.status}")
+                }
+
+            } catch (e: Exception) {
+                Log.e("Supabase", "Error subiendo imagen", e)
+            }
+        }
+    }
+
+
+    private fun guardarImagenRutaFirestore(url: String) {
+        val rutaName = arguments?.getString("rutaName")
+        val auth = FirebaseAuth.getInstance()
+        val userEmail = auth.currentUser?.email
+
+        if (rutaName != null && userEmail != null) {
+            val db = FirebaseFirestore.getInstance()
+            val rutaRef = db.collection("usuarios").document(userEmail).collection("rutas").document(rutaName)
+
+            rutaRef.update("imagenRuta", url)
+                .addOnSuccessListener {
+                    Log.i("Firestore", "Imagen de la ruta guardada")
+                }
+                .addOnFailureListener { e ->
+                    Log.e("Firestore", "Error guardando imagen ruta", e)
+                }
+        }
+    }
+
 
     private fun calcularDistanciaTotal(): Double {
         var total = 0.0

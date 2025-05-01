@@ -2,29 +2,25 @@ package com.rlunaalc.rutify.ui.home
 
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Polyline
-import com.google.android.gms.maps.model.PolylineOptions
-import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.MarkerOptions
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.android.material.button.MaterialButton
-import com.google.android.material.textfield.TextInputEditText
-
 import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.*
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.rlunaalc.rutify.R
 import com.rlunaalc.rutify.databinding.FragmentHomeBinding
 import org.json.JSONObject
@@ -34,126 +30,50 @@ import java.util.*
 class HomeFragment : Fragment(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
-    var points = mutableListOf<LatLng>()
-    private lateinit var polyline: Polyline
     private lateinit var binding: FragmentHomeBinding
+    private var points = mutableListOf<LatLng>()
+    private lateinit var polyline: Polyline
+    private val markers = mutableListOf<Marker>()
 
+    @RequiresApi(35)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
 
-        val homeFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-        homeFragment.getMapAsync(this)
+        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+        mapFragment.getMapAsync(this)
 
         binding.drawRouteButton.setOnClickListener {
             if (points.size >= 2) {
                 drawRoute(points)
             } else {
-                Log.e("MapFragment", "No hay suficientes puntos para trazar la ruta.")
+                Snackbar.make(requireView(), "Agrega al menos dos puntos", Snackbar.LENGTH_SHORT).show()
             }
         }
 
-        // Botón para guardar la ruta
+        binding.undoButton.setOnClickListener {
+            if (points.isNotEmpty() && markers.isNotEmpty()) {
+                points.removeLast()
+                markers.removeLast().remove()
+            }
+        }
+
         binding.saveRouteButton.setOnClickListener {
             val nombreRuta = binding.routeNameEditText.text.toString().trim()
-
             if (nombreRuta.isEmpty()) {
-                Toast.makeText(requireContext(), "Por favor, ingrese un nombre para la ruta", Toast.LENGTH_SHORT).show()
+                Snackbar.make(requireView(), "Por favor, ingrese un nombre para la ruta", Snackbar.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-
             if (points.isEmpty()) {
-                Toast.makeText(requireContext(), "No hay ruta para guardar", Toast.LENGTH_SHORT).show()
+                Snackbar.make(requireView(), "No hay ruta para guardar", Snackbar.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-
             guardarRutaEnFirebase(nombreRuta, points)
         }
 
         return binding.root
-    }
-
-    private fun drawRoute(points: List<LatLng>) {
-        if (points.size < 2) {
-            Log.e("MapFragment", "No hay suficientes puntos para trazar la ruta.")
-            return
-        }
-
-        val start = points.first()
-        val end = points.last()
-        Log.d("MapFragment", "Solicitando ruta de $start a $end")
-
-        val apiKey = "AIzaSyCfGYR2vyhOTIdfH1KaKBv43wK8xOAwMiA"
-        val waypoints = points.drop(1).dropLast(1).joinToString("|") { "${it.latitude},${it.longitude}" }
-        val waypointsParam = if (waypoints.isNotEmpty()) "&waypoints=$waypoints" else ""
-        val directionsUrl = "https://maps.googleapis.com/maps/api/directions/json?origin=${start.latitude},${start.longitude}&destination=${end.latitude},${end.longitude}$waypointsParam&key=$apiKey"
-
-        // Log para verificar la URL generada
-        Log.d("MapFragment", "URL de Directions: $directionsUrl")
-
-        val queue = Volley.newRequestQueue(requireContext())
-        val stringRequest = StringRequest(Request.Method.GET, directionsUrl,
-            { response ->
-                try {
-                    // Log para ver la respuesta completa de la API
-                    Log.d("MapFragment", "Respuesta de la API: $response")
-
-                    val jsonResponse = JSONObject(response)
-                    val routes = jsonResponse.getJSONArray("routes")
-
-                    if (routes.length() == 0) {
-                        Log.e("MapFragment", "No se encontraron rutas en la respuesta de la API.")
-                        return@StringRequest
-                    }
-
-                    val routePoints = mutableListOf<LatLng>()
-                    val legs = routes.getJSONObject(0).getJSONArray("legs")
-                    for (i in 0 until legs.length()) {
-                        val steps = legs.getJSONObject(i).getJSONArray("steps")
-                        for (j in 0 until steps.length()) {
-                            val polyline = steps.getJSONObject(j).getJSONObject("polyline")
-                            val decodedPoints = decodePoly(polyline.getString("points"))
-                            routePoints.addAll(decodedPoints)
-                        }
-                    }
-
-                    if (routePoints.isNotEmpty()) {
-                        Log.d("MapFragment", "Dibujando ruta con ${routePoints.size} puntos.")
-                        drawPolyline(routePoints)
-                    } else {
-                        Log.e("MapFragment", "La API no devolvió puntos de ruta válidos.")
-                    }
-
-                } catch (e: Exception) {
-                    Log.e("MapFragment", "Error al procesar la respuesta de la API.", e)
-                }
-            },
-            { error -> Log.e("MapFragment", "Error en la solicitud a la API: $error") }
-        )
-
-        queue.add(stringRequest)
-    }
-
-    private fun drawPolyline(routePoints: List<LatLng>) {
-        if (routePoints.isEmpty()) {
-            Log.e("MapFragment", "No hay puntos para dibujar la línea.")
-            return
-        }
-
-        val polylineOptions = PolylineOptions()
-            .color(Color.BLUE)
-            .width(8f)
-            .addAll(routePoints)
-
-        if (::mMap.isInitialized) {
-            polyline = mMap.addPolyline(polylineOptions)
-            Log.d("MapFragment", "Línea dibujada con ${routePoints.size} puntos.")
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(routePoints.first(), 15f))
-        } else {
-            Log.e("MapFragment", "El mapa aún no está inicializado.")
-        }
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -162,9 +82,123 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
         mMap.setOnMapClickListener { latLng ->
             points.add(latLng)
-            Log.d("MapFragment", "Punto agregado: $latLng")
-            mMap.addMarker(MarkerOptions().position(latLng).title("Punto"))
+            val marker = mMap.addMarker(MarkerOptions().position(latLng).title("Punto"))
+            if (marker != null) {
+                markers.add(marker)
+            }
         }
+    }
+
+    private fun drawRoute(points: List<LatLng>) {
+        val start = points.first()
+        val end = points.last()
+        val apiKey = "AIzaSyCfGYR2vyhOTIdfH1KaKBv43wK8xOAwMiA"
+        val waypoints = points.drop(1).dropLast(1).joinToString("|") { "${it.latitude},${it.longitude}" }
+        val waypointsParam = if (waypoints.isNotEmpty()) "&waypoints=$waypoints" else ""
+        val directionsUrl = "https://maps.googleapis.com/maps/api/directions/json?origin=${start.latitude},${start.longitude}&destination=${end.latitude},${end.longitude}$waypointsParam&key=$apiKey"
+
+        val queue = Volley.newRequestQueue(requireContext())
+        val stringRequest = StringRequest(Request.Method.GET, directionsUrl,
+            { response ->
+                try {
+                    val jsonResponse = JSONObject(response)
+                    val routes = jsonResponse.getJSONArray("routes")
+
+                    if (routes.length() > 0) {
+                        val routePoints = mutableListOf<LatLng>()
+                        val legs = routes.getJSONObject(0).getJSONArray("legs")
+                        for (i in 0 until legs.length()) {
+                            val steps = legs.getJSONObject(i).getJSONArray("steps")
+                            for (j in 0 until steps.length()) {
+                                val polyline = steps.getJSONObject(j).getJSONObject("polyline")
+                                val decodedPoints = decodePoly(polyline.getString("points"))
+                                routePoints.addAll(decodedPoints)
+                            }
+                        }
+                        if (routePoints.isNotEmpty()) {
+                            drawAnimatedPolyline(routePoints)
+                            marcarInicioYFin(routePoints)
+                            mostrarDistanciaTotal(routePoints)
+                        }
+                    }
+                } catch (e: Exception) {
+                    Log.e("HomeFragment", "Error procesando respuesta Directions API", e)
+                }
+            },
+            { error ->
+                Log.e("HomeFragment", "Error en solicitud Directions API: $error")
+            }
+        )
+        queue.add(stringRequest)
+    }
+
+    private fun drawAnimatedPolyline(routePoints: List<LatLng>) {
+        if (::polyline.isInitialized) {
+            polyline.remove()
+        }
+
+        val polylineOptions = PolylineOptions()
+            .color(Color.BLUE)
+            .width(8f)
+
+        polyline = mMap.addPolyline(polylineOptions)
+
+        val handler = Handler()
+        var index = 0
+
+        val runnable = object : Runnable {
+            override fun run() {
+                if (index < routePoints.size) {
+                    val currentPoints = polyline.points.toMutableList()
+                    currentPoints.add(routePoints[index])
+                    polyline.points = currentPoints
+                    index++
+                    handler.postDelayed(this, 50) // velocidad de animación (ms)
+                }
+            }
+        }
+        handler.post(runnable)
+    }
+
+    private fun marcarInicioYFin(routePoints: List<LatLng>) {
+        mMap.addMarker(
+            MarkerOptions()
+                .position(routePoints.first())
+                .title("Inicio")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+        )
+
+        mMap.addMarker(
+            MarkerOptions()
+                .position(routePoints.last())
+                .title("Fin")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
+        )
+    }
+
+    private fun mostrarDistanciaTotal(points: List<LatLng>) {
+        var distanciaTotal = 0.0
+        for (i in 0 until points.size - 1) {
+            distanciaTotal += distanciaEntreDosPuntos(points[i], points[i + 1])
+        }
+
+        val distanciaKm = distanciaTotal
+        Snackbar.make(requireView(), "Distancia total: %.2f km".format(distanciaKm), Snackbar.LENGTH_LONG)
+            .setBackgroundTint(ContextCompat.getColor(requireContext(), R.color.green))
+            .setTextColor(ContextCompat.getColor(requireContext(), android.R.color.white))
+            .show()
+    }
+
+    private fun distanciaEntreDosPuntos(p1: LatLng, p2: LatLng): Double {
+        val earthRadius = 6371 // km
+
+        val latDiff = Math.toRadians(p2.latitude - p1.latitude)
+        val lngDiff = Math.toRadians(p2.longitude - p1.longitude)
+        val a = Math.sin(latDiff / 2) * Math.sin(latDiff / 2) +
+                Math.cos(Math.toRadians(p1.latitude)) * Math.cos(Math.toRadians(p2.latitude)) *
+                Math.sin(lngDiff / 2) * Math.sin(lngDiff / 2)
+        val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+        return earthRadius * c
     }
 
     private fun guardarRutaEnFirebase(nombreRuta: String, coordenadas: List<LatLng>) {
@@ -184,16 +218,12 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
             usuarioRef.collection("rutas").document(nombreRuta).set(rutaData)
                 .addOnSuccessListener {
-                    Log.d("Firebase", "Ruta '$nombreRuta' guardada exitosamente en Firestore")
                     Snackbar.make(requireView(), "Ruta guardada exitosamente", Snackbar.LENGTH_SHORT).show()
                 }
                 .addOnFailureListener { e ->
-                    Log.e("Firebase", "Error guardando la ruta", e)
-                    Snackbar.make(requireView(), "Error al guardar la ruta", Snackbar.LENGTH_SHORT).show()
+                    Log.e("HomeFragment", "Error guardando ruta", e)
+                    Snackbar.make(requireView(), "Error al guardar ruta", Snackbar.LENGTH_SHORT).show()
                 }
-        } else {
-            Log.e("Firebase", "No hay usuario autenticado")
-            Snackbar.make(requireView(), "Usuario no autenticado", Snackbar.LENGTH_SHORT).show()
         }
     }
 
@@ -213,11 +243,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                 shift += 5
             } while (b >= 0x20)
 
-            val dlat = if (result and 1 != 0) {
-                (result shr 1).inv()
-            } else {
-                result shr 1
-            }
+            val dlat = if (result and 1 != 0) (result shr 1).inv() else result shr 1
             lat += dlat
 
             shift = 0
@@ -228,11 +254,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                 shift += 5
             } while (b >= 0x20)
 
-            val dlng = if (result and 1 != 0) {
-                (result shr 1).inv()
-            } else {
-                result shr 1
-            }
+            val dlng = if (result and 1 != 0) (result shr 1).inv() else result shr 1
             lng += dlng
 
             poly.add(LatLng(lat.toDouble() / 1E5, lng.toDouble() / 1E5))

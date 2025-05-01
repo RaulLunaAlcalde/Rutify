@@ -83,6 +83,7 @@ dependencies {
 
     // Volley (si lo necesitas)
     implementation(libs.volley)
+    implementation(libs.firebase.crashlytics.buildtools)
 
     // Tests
     testImplementation(libs.junit)

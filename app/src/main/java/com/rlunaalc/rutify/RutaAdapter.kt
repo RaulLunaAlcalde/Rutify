@@ -1,5 +1,8 @@
 package com.rlunaalc.rutify
 
+import android.annotation.SuppressLint
+import android.app.Dialog
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +11,9 @@ import android.widget.TextView
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
+
 
 class RutaAdapter(
     private val listaRutas: List<Ruta>,
@@ -28,6 +34,7 @@ class RutaAdapter(
         return RutaViewHolder(view)
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onBindViewHolder(holder: RutaViewHolder, position: Int) {
         val ruta = listaRutas[position]
 
@@ -35,6 +42,54 @@ class RutaAdapter(
         holder.tvNombreRuta.text = ruta.nombre
         holder.tvImagenPerfil.setImageResource(R.drawable.ic_android_white_24dp)
         holder.tvImagenRuta.setImageResource(R.drawable.ic_android_black_24dp)
+
+        if (!ruta.imagenRuta.isNullOrEmpty()) {
+            Glide.with(holder.itemView.context)
+                .load(ruta.imagenRuta)
+                .placeholder(R.drawable.ic_android_black_24dp)
+                .transition(withCrossFade()) // 🔥 Esta línea añade el efecto de transición suave
+                .into(holder.tvImagenRuta)
+
+        } else {
+            holder.tvImagenRuta.setImageResource(R.drawable.ic_android_black_24dp)
+        }
+
+        holder.tvImagenRuta.setOnClickListener {
+            if (!ruta.imagenRuta.isNullOrEmpty()) {
+                val dialog = Dialog(holder.itemView.context, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
+                dialog.setContentView(R.layout.dialog_imagen_grande)
+                val imageView = dialog.findViewById<ImageView>(R.id.dialogImageView)
+
+                Glide.with(holder.itemView.context)
+                    .load(ruta.imagenRuta)
+                    .transition(withCrossFade())
+                    .into(imageView)
+
+                // 🚀 Detectar swipe hacia abajo para cerrar
+                var yStart = 0f
+                imageView.setOnTouchListener { v, event ->
+                    when (event.action) {
+                        android.view.MotionEvent.ACTION_DOWN -> {
+                            yStart = event.y
+                            true
+                        }
+                        android.view.MotionEvent.ACTION_UP -> {
+                            val yEnd = event.y
+                            if (yEnd - yStart > 300) { // 300px de movimiento hacia abajo
+                                dialog.dismiss()
+                            }
+                            true
+                        }
+                        else -> false
+                    }
+                }
+
+                dialog.show()
+            }
+        }
+
+
+
 
         holder.itemView.setOnClickListener {
             val navController = Navigation.findNavController(holder.itemView)

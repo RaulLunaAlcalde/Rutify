@@ -140,6 +140,16 @@
                 android:text="Volver al Inicio"
                 android:elevation="8dp" />
 
+            <Button
+                android:id="@+id/btnSubirImagenRuta"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:backgroundTint="@color/green"
+                android:textColor="@android:color/white"
+                android:text="Subir Imagen"
+                android:elevation="8dp" />
+
 
         </LinearLayout>
 

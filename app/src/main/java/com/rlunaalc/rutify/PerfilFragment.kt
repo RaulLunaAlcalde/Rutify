@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.client.HttpClient
 import com.google.firebase.firestore.FirebaseFirestore
 import com.rlunaalc.rutify.databinding.FragmentPerfilBinding
 import io.ktor.client.*
