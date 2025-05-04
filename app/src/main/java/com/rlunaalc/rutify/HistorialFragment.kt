@@ -39,22 +39,33 @@ class HistorialFragment : Fragment() {
 
         if (usuarioActual != null) {
             val usuarioEmail = usuarioActual.email ?: return
-            val usuarioRef = FirebaseFirestore.getInstance().collection("usuarios").document(usuarioEmail)
+            val db = FirebaseFirestore.getInstance()
+            val usuarioRef = db.collection("usuarios").document(usuarioEmail)
 
-            usuarioRef.collection("rutas")
-                .whereEqualTo("rutaHecha", true) // Solo rutas completadas
-                .get()
-                .addOnSuccessListener { documentos ->
-                    listaRutas.clear()
-                    for (documentoRuta in documentos) {
-                        val ruta = documentoRuta.toObject(Ruta::class.java)
-                        listaRutas.add(ruta)
-                    }
-                    rutaAdapter.notifyDataSetChanged()
+            usuarioRef.get()
+                .addOnSuccessListener { docUsuario ->
+                    val imagenPerfil = docUsuario.getString("imagenPerfil") ?: ""
+
+                    usuarioRef.collection("rutas")
+                        .whereEqualTo("rutaHecha", true)
+                        .get()
+                        .addOnSuccessListener { documentos ->
+                            listaRutas.clear()
+                            for (documentoRuta in documentos) {
+                                val ruta = documentoRuta.toObject(Ruta::class.java)
+                                    .copy(imagenUsuario = imagenPerfil)
+                                listaRutas.add(ruta)
+                            }
+                            rutaAdapter.notifyDataSetChanged()
+                        }
+                        .addOnFailureListener { e ->
+                            Log.e("Firebase", "Error obteniendo rutas hechas", e)
+                        }
                 }
                 .addOnFailureListener { e ->
-                    Log.e("Firebase", "Error obteniendo rutas hechas", e)
+                    Log.e("Firebase", "Error obteniendo perfil de usuario", e)
                 }
         }
     }
+
 }

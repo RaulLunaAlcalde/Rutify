@@ -31,38 +31,18 @@
                 android:scaleType="centerCrop"
                 android:padding="6dp"/>
 
+            <!-- Nombre de la ruta -->
             <TextView
-                android:id="@+id/tvNombreUsuario"
-                android:layout_width="wrap_content"
+                android:id="@+id/tvNombreRuta"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:text="Usuario"
+                android:text="Nombre de la ruta"
                 android:textColor="@color/white"
-                android:textSize="16sp"
-                android:textStyle="bold"/>
+                android:textSize="15sp"
+                android:maxLines="1"
+                android:ellipsize="end" />
+
         </LinearLayout>
-
-        <!-- Imagen de la ruta -->
-        <ImageView
-            android:id="@+id/tvImagenRuta"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:scaleType="centerCrop"
-            android:adjustViewBounds="true"
-            android:background="@drawable/rounded_background_image"
-            android:clipToOutline="true" />
-
-        <!-- Nombre de la ruta -->
-        <TextView
-            android:id="@+id/tvNombreRuta"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Nombre de la ruta"
-            android:textColor="@color/white"
-            android:textSize="15sp"
-            android:layout_marginTop="8dp"
-            android:maxLines="1"
-            android:ellipsize="end" />
 
     </LinearLayout>
 

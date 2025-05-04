@@ -14,7 +14,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 class HomeDefFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
-    private lateinit var rutaAdapter: RutaAdapter
+    private lateinit var rutaAdapter: RutaHomeAdapter
     private val listaRutasPendientes = mutableListOf<Ruta>()
 
     override fun onCreateView(
@@ -30,7 +30,7 @@ class HomeDefFragment : Fragment() {
         recyclerView = view.findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        rutaAdapter = RutaAdapter(listaRutasPendientes, "homeDef")
+        rutaAdapter = RutaHomeAdapter(listaRutasPendientes, "homeDef")
         recyclerView.adapter = rutaAdapter
 
         obtenerRutasPendientesDesdeFirebase()

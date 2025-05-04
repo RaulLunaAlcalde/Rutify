@@ -54,23 +54,42 @@ class RegisterFragment : Fragment() {
     }
 
     private fun guardarUsuarioEnFirestore(email: String, username: String, pass: String) {
-        val user = mapOf(
-            "email" to email,
-            "usuario" to username,
-            "contrasenya" to pass,
-            "fechaRegistro" to com.google.firebase.Timestamp.now()
-        )
+        val usuariosRef = firestore.collection("usuarios")
 
-        firestore.collection("usuarios").document(email)
-            .set(user)
-            .addOnSuccessListener {
-                showSnackbar("¡Usuario registrado correctamente!")
-                findNavController().navigate(R.id.nav_home)
+        usuariosRef.get().addOnSuccessListener { snapshot ->
+            var maxId = 0L
+            for (document in snapshot) {
+                val id = document.getLong("id")
+                if (id != null && id > maxId) {
+                    maxId = id
+                }
             }
-            .addOnFailureListener {
-                showSnackbar("Error al guardar en Firestore")
-            }
+
+            val nuevoId = maxId + 1
+
+            val user = mapOf(
+                "email" to email,
+                "usuario" to username,
+                "contrasenya" to pass,
+                "fechaRegistro" to com.google.firebase.Timestamp.now(),
+                "id" to nuevoId
+            )
+
+            usuariosRef.document(email)
+                .set(user)
+                .addOnSuccessListener {
+                    showSnackbar("¡Usuario registrado correctamente!")
+                    findNavController().navigate(R.id.nav_home)
+                }
+                .addOnFailureListener {
+                    showSnackbar("Error al guardar en Firestore")
+                }
+
+        }.addOnFailureListener {
+            showSnackbar("Error al generar ID de usuario")
+        }
     }
+
 
     private fun showSnackbar(message: String) {
         val snackbar = com.google.android.material.snackbar.Snackbar.make(requireView(), message, com.google.android.material.snackbar.Snackbar.LENGTH_SHORT)

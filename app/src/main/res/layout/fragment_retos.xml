@@ -4,12 +4,24 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="#222"
         tools:context=".ui.retos.RetosFragment">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewRetos"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:paddingBottom="80dp" />
+
+        <!-- Botón para ir al perfil -->
+        <Button
+            android:id="@+id/btnIrPerfil"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ir a Perfil"
+            android:textColor="#FFF"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="16dp"/>
 
     </FrameLayout>
 </layout>

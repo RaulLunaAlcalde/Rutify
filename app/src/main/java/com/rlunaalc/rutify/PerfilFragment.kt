@@ -79,9 +79,11 @@ class PerfilFragment : Fragment() {
     private fun cargarDatosPerfil() {
         val usuarioActual = auth.currentUser
         if (usuarioActual != null) {
-            val usuarioEmail = usuarioActual.email ?: return
 
+            val usuarioEmail = usuarioActual.email?.trim()?.lowercase() ?: return
             val usuarioRef = db.collection("usuarios").document(usuarioEmail)
+            Log.d("Perfil", "Buscando documento con email: $usuarioEmail")
+
 
             usuarioRef.get()
                 .addOnSuccessListener { documento ->
@@ -89,6 +91,7 @@ class PerfilFragment : Fragment() {
                         val usuarioId = documento.getLong("id") ?: return@addOnSuccessListener
                         val nombre = documento.getString("nombre") ?: "Usuario"
                         val imagenPerfil = documento.getString("imagenPerfil") ?: ""
+                        Log.d("Perfil", "URL de imagen obtenida: $imagenPerfil")
 
                         binding.txtNombre.text = nombre
 
@@ -103,6 +106,9 @@ class PerfilFragment : Fragment() {
                 .addOnFailureListener { e ->
                     Log.e("Perfil", "Error obteniendo datos del usuario", e)
                 }
+        }
+        else {
+            Log.d("Perfil", "No User")
         }
     }
 

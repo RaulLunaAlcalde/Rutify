@@ -14,12 +14,6 @@
         android:layout_weight="1"
         android:title="@string/menu_historial" />
     <item
-        android:id="@+id/grupsFragment"
-        android:icon="@drawable/groups"
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:title="@string/menu_grups" />
-    <item
         android:id="@+id/nav_home"
         android:icon="@drawable/routes"
         android:layout_width="0dp"

@@ -5,7 +5,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.FirebaseFirestore
@@ -13,7 +15,7 @@ import com.rlunaalc.rutify.ui.Coordenada
 
 class RetosFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
-    private lateinit var rutaAdapter: RutaAdapter
+    private lateinit var rutaAdapter: RetoAdapter
     private val db = FirebaseFirestore.getInstance()
     private val listaRetos = mutableListOf<Ruta>() // Seguimos usando Ruta
 
@@ -30,10 +32,14 @@ class RetosFragment : Fragment() {
         recyclerView = view.findViewById(R.id.recyclerViewRetos)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        rutaAdapter = RutaAdapter(listaRetos, "retos")
+        rutaAdapter = RetoAdapter(listaRetos, "retos")
         recyclerView.adapter = rutaAdapter
 
         obtenerRetosDesdeFirebase()
+
+        view.findViewById<Button>(R.id.btnIrPerfil).setOnClickListener {
+            findNavController().navigate(R.id.action_retosFragment_to_perfilFragment)
+        }
     }
 
     private fun obtenerRetosDesdeFirebase() {
@@ -50,12 +56,12 @@ class RetosFragment : Fragment() {
                             lng = (punto["lng"] as Number).toDouble()
                         )
                     }
+                    val nombreImagen = "reto_${nombreReto}.jpg"
+                    val imagenRutaUrl = "https://lsowlungekgzqifulsoh.supabase.co/storage/v1/object/public/foto/$nombreImagen"
 
                     val ruta = Ruta(
                         nombre = nombreReto,
-                        usuario = "Anónimo", // No hay creador en tu estructura, ponemos "Anónimo"
-                        imagenRuta = "",
-                        imagenUsuario = "",
+                        imagenRuta = imagenRutaUrl,
                         coordenadas = coordenadas
                     )
 
