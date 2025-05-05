@@ -117,6 +117,7 @@ class RegisterFragment : Fragment() {
         val fullText = "Inscriu-te a\nRutify"
         val typingDelay: Long = 80
         val cursorBlinkDelay: Long = 500
+        val pauseBeforeRestart: Long = 10000
 
         var index = 0
         var repeatCount = 0
@@ -125,8 +126,9 @@ class RegisterFragment : Fragment() {
         val handler = Handler(Looper.getMainLooper())
 
         lateinit var cursorBlinkRunnable: Runnable
+        lateinit var typingRunnable: Runnable
 
-        val typingRunnable = object : Runnable {
+        typingRunnable = object : Runnable {
             override fun run() {
                 if (index <= fullText.length) {
                     val text = fullText.substring(0, index)
@@ -137,12 +139,14 @@ class RegisterFragment : Fragment() {
                 } else {
                     repeatCount++
                     if (repeatCount < maxRepeats) {
+
                         handler.postDelayed({
                             index = 0
                             titleTextView.text = ""
-                            handler.post(this)
-                        }, 500)
+                            handler.post(typingRunnable)
+                        }, pauseBeforeRestart)
                     } else {
+
                         handler.post(cursorBlinkRunnable)
                     }
                 }
