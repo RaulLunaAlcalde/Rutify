@@ -15,7 +15,7 @@ import com.rlunaalc.rutify.ui.Coordenada
 
 class RetosFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
-    private lateinit var rutaAdapter: RetoAdapter
+    private lateinit var rutaAdapter: RutaAdapter
     private val db = FirebaseFirestore.getInstance()
     private val listaRetos = mutableListOf<Ruta>() // Seguimos usando Ruta
 
@@ -32,7 +32,7 @@ class RetosFragment : Fragment() {
         recyclerView = view.findViewById(R.id.recyclerViewRetos)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        rutaAdapter = RetoAdapter(listaRetos, "retos")
+        rutaAdapter = RutaAdapter(listaRetos, "retos")
         recyclerView.adapter = rutaAdapter
 
         obtenerRetosDesdeFirebase()

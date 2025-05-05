@@ -336,11 +336,16 @@ class RealizarRuta : Fragment(), OnMapReadyCallback {
         return "%02d:%02d".format(minutos, segundosRestantes)
     }
 
-
     private fun obtenerRuta(rutaName: String) {
         val db = FirebaseFirestore.getInstance()
         val auth = FirebaseAuth.getInstance()
-        val usuarioEmail = auth.currentUser?.email ?: return
+        val usuarioEmail = auth.currentUser?.email
+
+        if (usuarioEmail == null) {
+            Log.e("RealizarRuta", "No hay usuario autenticado")
+            return
+        }
+
         val usuarioRef = db.collection("usuarios").document(usuarioEmail)
 
         usuarioRef.collection("rutas").document(rutaName).get()
@@ -352,10 +357,40 @@ class RealizarRuta : Fragment(), OnMapReadyCallback {
                         obtenerRutaOptimizada(ruta.coordenadas.map { it.toLatLng() })
                         mostrarInfoRuta(ruta)
                     }
+                } else {
+                    // 👇 Si no existe en rutas del usuario, buscar en "retos"
+                    db.collection("retos").document(rutaName).get()
+                        .addOnSuccessListener { retoDoc ->
+                            if (retoDoc.exists()) {
+                                val puntos = retoDoc.get("puntos") as? List<Map<String, Any>> ?: emptyList()
+
+                                val coordenadas = puntos.map { punto ->
+                                    Coordenada(
+                                        lat = (punto["lat"] as Number).toDouble(),
+                                        lng = (punto["lng"] as Number).toDouble()
+                                    )
+                                }
+
+                                val rutaDesdeReto = Ruta(
+                                    nombre = rutaName,
+                                    imagenRuta = "",
+                                    coordenadas = coordenadas
+                                )
+
+                                this.ruta = rutaDesdeReto
+                                obtenerRutaOptimizada(coordenadas.map { it.toLatLng() })
+                                mostrarInfoRuta(rutaDesdeReto)
+                            } else {
+                                Log.e("RealizarRuta", "No se encontró ni en rutas ni en retos")
+                            }
+                        }
+                        .addOnFailureListener { e ->
+                            Log.e("RealizarRuta", "Error buscando reto", e)
+                        }
                 }
             }
             .addOnFailureListener { e ->
-                Log.e("Firebase", "Error al obtener ruta", e)
+                Log.e("RealizarRuta", "Error buscando ruta", e)
             }
     }
 

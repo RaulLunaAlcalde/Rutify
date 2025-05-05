@@ -63,7 +63,8 @@
         tools:layout="@layout/fragment_realizar_ruta" >
         <argument
             android:name="rutaName"
-            app:argType="string" />
+            app:argType="string"
+            app:nullable="false" />
         <action
             android:id="@+id/action_realizarRuta_to_rutaCompletada"
             app:destination="@id/rutaCompletada" />

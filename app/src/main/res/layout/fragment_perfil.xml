@@ -1,108 +1,196 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
-    android:padding="16dp"
-    android:background="#222">
-
-    <TextView
-        android:id="@+id/txtPerfil"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Perfil"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:textColor="#FFF"/>
-
-    <ImageView
-        android:id="@+id/imgPerfil"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginTop="16dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/profile"/>
-
-    <TextView
-        android:id="@+id/txtNombre"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Usuario"
-        android:textSize="20sp"
-        android:textColor="#FFF"
-        android:layout_marginTop="8dp"/>
+    android:background="#1E1E1E"
+    android:padding="16dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:layout_marginTop="16dp">
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
 
-        <LinearLayout
+        <!-- Título -->
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginEnd="16dp"
-            android:gravity="center">
+            android:text="Perfil"
+            android:textColor="#FFFFFF"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="12dp" />
 
-            <TextView
-                android:id="@+id/txtSeguidores"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0"
-                android:textSize="18sp"
-                android:textColor="#FFF"
-                android:textStyle="bold"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Seguidores"
-                android:textSize="14sp"
-                android:textColor="#FFF"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
+        <!-- Contenedor del perfil -->
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center">
+            android:background="#333333"
+            android:padding="16dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginHorizontal="8dp"
+            android:backgroundTint="#333333"
+            android:elevation="4dp">
 
+            <!-- Imagen de perfil -->
+            <ImageView
+                android:id="@+id/imgPerfil"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="8dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/profile"
+                android:background="@drawable/circle_background"
+                android:layout_marginTop="8dp" />
+
+            <!-- Icono de editar -->
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignEnd="@id/imgPerfil"
+                android:layout_alignTop="@id/imgPerfil"
+                android:src="@drawable/ic_edit"
+                android:background="@drawable/green_circle"
+                android:padding="2dp" />
+
+            <!-- Nombre -->
             <TextView
-                android:id="@+id/txtSiguiendo"
+                android:id="@+id/txtNombre"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="0"
-                android:textSize="18sp"
-                android:textColor="#FFF"
+                android:layout_below="@id/imgPerfil"
+                android:layout_centerHorizontal="true"
+                android:text="Raul L."
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                android:layout_marginTop="12dp"
+                android:textStyle="bold" />
+
+            <!-- Contador seguidores/seguidos -->
+            <LinearLayout
+                android:layout_below="@id/txtNombre"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginTop="16dp">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:layout_marginEnd="32dp">
+
+                    <TextView
+                        android:id="@+id/txtSeguidores"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="320"
+                        android:textColor="#FFFFFF"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Seguidors"
+                        android:textColor="#BBBBBB"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/txtSiguiendo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="1190"
+                        android:textColor="#FFFFFF"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Seguint"
+                        android:textColor="#BBBBBB"
+                        android:textSize="14sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </RelativeLayout>
+
+        <!-- Botón Reptes -->
+        <LinearLayout
+            android:id="@+id/btnReptes"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="#444444"
+            android:clipToPadding="false"
+            android:layout_marginHorizontal="8dp"
+            android:background="@drawable/rounded_grey_bg">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/reptes_mdpi_custombg"
+                android:layout_marginEnd="12dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Reptes"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
                 android:textStyle="bold"/>
+        </LinearLayout>
+
+
+
+        <!-- Botón Tancar Sessió -->
+        <LinearLayout
+            android:id="@+id/btnCerrarSesion"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="#D32F2F"
+            android:clipToPadding="false"
+            android:layout_marginHorizontal="8dp"
+            android:background="@drawable/rounded_red_bg">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/logout_mdpi_custombg"
+                android:layout_marginEnd="12dp"
+                app:tint="#FFFFFF" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Siguiendo"
-                android:textSize="14sp"
-                android:textColor="#FFF"/>
+                android:text="Tancar Sessió"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold"/>
         </LinearLayout>
+
+
     </LinearLayout>
-
-    <Button
-        android:id="@+id/btnReptes"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Reptes"
-        android:textColor="#FFFFFF"
-        android:backgroundTint="#1976D2"
-        android:layout_marginTop="16dp"/>
-
-    <Button
-        android:id="@+id/btnCerrarSesion"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Tancar Sessió"
-        android:textColor="#FFFFFF"
-        android:backgroundTint="#D32F2F"
-        android:layout_marginTop="24dp"/>
-</LinearLayout>
+</ScrollView>
