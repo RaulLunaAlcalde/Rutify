@@ -47,8 +47,10 @@ class RutaAdapter(
                 .circleCrop()
                 .transition(withCrossFade())
                 .into(holder.tvImagenPerfil)
+            Log.d("Firebase", "Reto obtenido: " + holder.tvImagenPerfil)
         } else {
             holder.tvImagenPerfil.setImageResource(R.drawable.ic_android_white_24dp)
+            Log.d("Firebase", "Reto obtenido else: " + holder.tvImagenPerfil)
         }
 
         holder.tvImagenRuta.setImageResource(R.drawable.ic_android_black_24dp)
