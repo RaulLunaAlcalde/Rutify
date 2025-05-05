@@ -60,6 +60,7 @@ class PerfilFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.seguidores.visibility = View.GONE
         cargarDatosPerfil()
 
         binding.btnCerrarSesion.setOnClickListener {
@@ -99,8 +100,8 @@ class PerfilFragment : Fragment() {
                             Glide.with(this).load(imagenPerfil).into(binding.imgPerfil)
                         }
 
-                        obtenerSeguidores(usuarioId)
-                        obtenerSeguidos(usuarioId)
+                        //obtenerSeguidores(usuarioId)
+                        //obtenerSeguidos(usuarioId)
                     }
                 }
                 .addOnFailureListener { e ->

@@ -29,7 +29,6 @@ class RutaCompletada : Fragment() {
             .setStartDelay(300)
             .start()
 
-
         val duracion = formatTiempo(args.duracionSegundos)
         view.findViewById<TextView>(R.id.tvDuracionFinal).text = "Duración: $duracion"
         view.findViewById<TextView>(R.id.tvDistanciaFinal).text = "Distancia: %.2f km".format(args.distanciaKm)

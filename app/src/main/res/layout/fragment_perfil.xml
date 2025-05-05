@@ -71,6 +71,7 @@
 
             <!-- Contador seguidores/seguidos -->
             <LinearLayout
+                android:id="@+id/seguidores"
                 android:layout_below="@id/txtNombre"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

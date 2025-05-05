@@ -65,6 +65,7 @@ class RealizarRuta : Fragment(), OnMapReadyCallback {
     private lateinit var locationRequest: com.google.android.gms.location.LocationRequest
     private lateinit var locationCallback: com.google.android.gms.location.LocationCallback
     private var marcadorUsuario: Marker? = null
+    private var esReto: Boolean = false
 
     private val apiKey = "AIzaSyCfGYR2vyhOTIdfH1KaKBv43wK8xOAwMiA"
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -129,6 +130,8 @@ class RealizarRuta : Fragment(), OnMapReadyCallback {
         obtenerRuta(rutaName)
 
         val btnSubirImagenRuta = view.findViewById<Button>(R.id.btnSubirImagenRuta)
+
+        btnSubirImagenRuta.visibility = View.GONE
         btnSubirImagenRuta.setOnClickListener {
             imagePickerLauncher.launch("image/*")
         }
@@ -362,6 +365,8 @@ class RealizarRuta : Fragment(), OnMapReadyCallback {
                     db.collection("retos").document(rutaName).get()
                         .addOnSuccessListener { retoDoc ->
                             if (retoDoc.exists()) {
+                                esReto = true  // ← Añade esta línea
+
                                 val puntos = retoDoc.get("puntos") as? List<Map<String, Any>> ?: emptyList()
 
                                 val coordenadas = puntos.map { punto ->
@@ -397,6 +402,14 @@ class RealizarRuta : Fragment(), OnMapReadyCallback {
     private fun mostrarInfoRuta(ruta: Ruta) {
         tvNombreRuta.text = "Nombre: ${ruta.nombre}"
         tvKilometros.text = "Kilómetros: ${"%.2f".format(calcularKilometros(ruta.coordenadas))}"
+
+        val btnSubirImagenRuta = requireView().findViewById<Button>(R.id.btnSubirImagenRuta)
+
+        if (!esReto) {
+            btnSubirImagenRuta.visibility = View.VISIBLE
+        } else {
+            btnSubirImagenRuta.visibility = View.GONE
+        }
     }
 
     private fun obtenerRutaOptimizada(coordenadas: List<LatLng>) {
