@@ -66,7 +66,7 @@ class LoginFragment : Fragment() {
         val fullText = "Uneix-te a\nRutify"
         val typingDelay: Long = 80
         val cursorBlinkDelay: Long = 500
-        val pauseBeforeRestart: Long = 10000 // Espera antes de volver a empezar
+        val pauseBeforeRestart: Long = 10000
         val maxRepeats = 3
 
         var index = 0
@@ -89,14 +89,14 @@ class LoginFragment : Fragment() {
                 } else {
                     repeatCount++
                     if (repeatCount < maxRepeats) {
-                        // Esperamos y luego reiniciamos
+
                         handler.postDelayed({
                             index = 0
                             titleTextView.text = ""
                             handler.post(typingRunnable)
                         }, pauseBeforeRestart)
                     } else {
-                        // Si ya se repitió 3 veces, solo dejamos el cursor parpadeando
+
                         handler.post(cursorBlinkRunnable)
                     }
                 }
