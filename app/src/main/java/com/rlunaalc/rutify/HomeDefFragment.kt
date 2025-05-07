@@ -42,22 +42,33 @@ class HomeDefFragment : Fragment() {
 
         if (usuarioActual != null) {
             val usuarioEmail = usuarioActual.email ?: return
-            val usuarioRef = FirebaseFirestore.getInstance().collection("usuarios").document(usuarioEmail)
+            val db = FirebaseFirestore.getInstance()
+            val usuarioRef = db.collection("usuarios").document(usuarioEmail)
 
-            usuarioRef.collection("rutas")
-                .whereEqualTo("rutaHecha", false) // Solo rutas NO hechas
-                .get()
-                .addOnSuccessListener { documentos ->
-                    listaRutasPendientes.clear()
-                    for (documentoRuta in documentos) {
-                        val ruta = documentoRuta.toObject(Ruta::class.java)
-                        listaRutasPendientes.add(ruta)
-                    }
-                    rutaAdapter.notifyDataSetChanged()
+            usuarioRef.get()
+                .addOnSuccessListener { docUsuario ->
+                    val imagenPerfil = docUsuario.getString("imagenPerfil") ?: ""
+
+                    usuarioRef.collection("rutas")
+                        .whereEqualTo("rutaHecha", false)
+                        .get()
+                        .addOnSuccessListener { documentos ->
+                            listaRutasPendientes.clear()
+                            for (documentoRuta in documentos) {
+                                val ruta = documentoRuta.toObject(Ruta::class.java)
+                                    .copy(imagenUsuario = imagenPerfil)
+                                listaRutasPendientes.add(ruta)
+                            }
+                            rutaAdapter.notifyDataSetChanged()
+                        }
+                        .addOnFailureListener { e ->
+                            Log.e("Firebase", "Error obteniendo rutas pendientes", e)
+                        }
                 }
                 .addOnFailureListener { e ->
-                    Log.e("Firebase", "Error obteniendo rutas pendientes", e)
+                    Log.e("Firebase", "Error obteniendo perfil de usuario", e)
                 }
         }
     }
+
 }
